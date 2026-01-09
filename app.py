@@ -41,7 +41,10 @@ if uploaded_file:
 
     X_test = data.iloc[:, :-1]
     y_test = data.iloc[:, -1]
-    pickle.load(open("model/label_encoder.pkl", "rb")).transform(y_test)
+    
+    # Load label encoder and encode target
+    label_encoder = pickle.load(open("model/label_encoder.pkl", "rb"))
+    y_test_encoded = label_encoder.transform(y_test)
 
     with open(f"model/{model_map[model_choice]}", "rb") as f:
         model = pickle.load(f)
@@ -50,7 +53,7 @@ if uploaded_file:
 
     try:
         y_prob = model.predict_proba(X_test)[:, 1]
-        auc = roc_auc_score(y_test, y_prob)
+        auc = roc_auc_score(y_test_encoded, y_prob)
     except:
         auc = "N/A"
 
@@ -58,12 +61,12 @@ if uploaded_file:
 
     col1, col2, col3 = st.columns(3)
 
-    col1.metric("Accuracy", accuracy_score(y_test, y_pred))
-    col1.metric("Precision", precision_score(y_test, y_pred))
-    col1.metric("Recall", recall_score(y_test, y_pred))
+    col1.metric("Accuracy", accuracy_score(y_test_encoded, y_pred))
+    col1.metric("Precision", precision_score(y_test_encoded, y_pred, zero_division=0))
+    col1.metric("Recall", recall_score(y_test_encoded, y_pred, zero_division=0))
 
-    col2.metric("F1 Score", f1_score(y_test, y_pred))
-    col2.metric("MCC", matthews_corrcoef(y_test, y_pred))
+    col2.metric("F1 Score", f1_score(y_test_encoded, y_pred, zero_division=0))
+    col2.metric("MCC", matthews_corrcoef(y_test_encoded, y_pred))
     col2.metric("AUC", auc)
 
     st.subheader("📉 Confusion Matrix")
