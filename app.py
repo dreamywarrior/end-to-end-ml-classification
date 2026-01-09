@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import (
     accuracy_score, roc_auc_score, precision_score,
     recall_score, f1_score, matthews_corrcoef,
-    confusion_matrix
+    confusion_matrix, plot_confusion_matrix
 )
 
 # Configure logging
@@ -78,10 +78,13 @@ if uploaded_file:
     f1 = f1_score(y_test_encoded, y_pred, zero_division=0, average="weighted")
 
     # Log metrics with 5 decimal places
+    logging.info(f'Evaluation Metrics ({model_choice}):')
     logging.info(f'Accuracy: {accuracy:.5f}')
     logging.info(f'Precision: {precision:.5f}')
     logging.info(f'Recall: {recall:.5f}')
     logging.info(f'F1 Score: {f1:.5f}')
+    logging.info(f'MCC: {matthews_corrcoef(y_test_encoded, y_pred):.5f}')
+    logging.info(f'AUC: {auc if isinstance(auc, str) else f"{auc:.5f}"}')
 
     col1.metric("Accuracy", round(accuracy, 5))
     col1.metric("Precision", round(precision, 5))
@@ -89,17 +92,8 @@ if uploaded_file:
 
     col2.metric("F1 Score", round(f1, 5))
     col2.metric("MCC", round(matthews_corrcoef(y_test_encoded, y_pred), 5))
-    col2.metric("AUC", auc)
+    col2.metric("AUC", round(auc, 5) if isinstance(auc, float) else auc)
 
     st.subheader("📉 Confusion Matrix")
-    
-    # Confusion Matrix
-    cm = confusion_matrix(y_test_encoded, y_pred)
-    plt.figure(figsize=(10, 7))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', cbar=False,
-                xticklabels=list(target_mapping.keys()),
-                yticklabels=list(target_mapping.keys()))
-    plt.ylabel('True Label')
-    plt.xlabel('Predicted Label')
-    plt.title('Confusion Matrix')
-    plt.show()
+    plot_confusion_matrix(model, X_test, y_test_encoded, display_labels=["Dropout", "Graduate", "Enrolled"], cmap=plt.cm.Blues)
+    st.pyplot()
