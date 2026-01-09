@@ -41,7 +41,7 @@ if uploaded_file:
 
     X_test = data.iloc[:, :-1]
     y_test = data.iloc[:, -1]
-    pickle.load(open("label_encoder.pkl", "rb")).transform(y_test)
+    pickle.load(open("model/label_encoder.pkl", "rb")).transform(y_test)
 
     with open(f"model/{model_map[model_choice]}", "rb") as f:
         model = pickle.load(f)
