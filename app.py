@@ -209,19 +209,19 @@ for model_name in selected_models:
     )
     report_df = pd.DataFrame(report).transpose()
     report_df = report_df.drop(index="accuracy", errors="ignore")
+    report_df = report_df[["precision", "recall", "f1-score"]]
 
     styled_report = (
         report_df
         .style
         .background_gradient(
             cmap="RdYlGn",
-            subset=["precision", "recall", "f1-score", "support"]
+            subset=["precision", "recall", "f1-score"]
         )
         .format({
             "precision": "{:.3f}",
             "recall": "{:.3f}",
             "f1-score": "{:.3f}",
-            "support": "{:.0f}"
         })
     )
 
