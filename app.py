@@ -293,6 +293,5 @@ plot_df = display_df.melt(
 
 fig, ax = plt.subplots(figsize=(12, 6))
 sns.barplot(data=plot_df, x="Model", y="Score", hue="Metric", ax=ax)
-plt.xticks(rotation=20)
 plt.tight_layout()
 st.pyplot(fig)
