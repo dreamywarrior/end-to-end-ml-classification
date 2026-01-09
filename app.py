@@ -28,12 +28,12 @@ model_choice = st.selectbox(
 )
 
 model_map = {
-    "Logistic Regression": "logistic_regression.pkl",
-    "Decision Tree": "decision_tree.pkl",
-    "KNN": "knn.pkl",
-    "Naive Bayes": "naive_bayes.pkl",
-    "Random Forest": "random_forest.pkl",
-    "XGBoost": "xgboost.pkl"
+    "Logistic Regression": "Logistic_Regression.pkl",
+    "Decision Tree": "Decision_Tree.pkl",
+    "KNN": "KNN.pkl",
+    "Naive Bayes": "Naive_Bayes.pkl",
+    "Random Forest": "Random_Forest.pkl",
+    "XGBoost": "XGBoost.pkl"
 }
 
 if uploaded_file:
@@ -47,7 +47,7 @@ if uploaded_file:
     target_mapping = dict(zip(mapping_df['class'], mapping_df['encoded']))
     y_test_encoded = y_test.map(target_mapping).values
     st.write("✓ Test data and target variable loaded successfully.")
-    
+
     with open(f"model/{model_map[model_choice]}", "rb") as f:
         model = pickle.load(f)
 
