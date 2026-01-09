@@ -20,6 +20,19 @@ st.set_page_config(
     layout="wide"
 )
 
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-image: url("resources/sk_background.jpg");
+        background-size: cover;
+        background-attachment: fixed;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # --------------------------------------------------
 # MODEL METADATA
 # --------------------------------------------------
@@ -93,17 +106,11 @@ if uploaded_file is None:
         """)
 
     with col2:
-        workflow_df = pd.DataFrame({
-            "Stage": ["Upload", "Evaluate", "Analyze", "Compare"],
-            "Value": [1, 1, 1, 1]
-        })
-
-        fig, ax = plt.subplots()
-        sns.barplot(data=workflow_df, x="Stage", y="Value", ax=ax)
-        ax.set_ylabel("")
-        ax.set_yticks([])
-        ax.set_title("Evaluation Workflow")
-        st.pyplot(fig)
+        st.image(
+            "resources/model_evaluator.jpg",
+            caption="Evaluation Workflow",
+            use_container_width=True
+        )
 
     st.info("⬅️ Upload test data from the sidebar to begin")
     st.stop()
@@ -201,13 +208,14 @@ for model_name in selected_models:
         output_dict=True
     )
     report_df = pd.DataFrame(report).transpose()
+    report_df = report_df.drop(index="accuracy", errors="ignore")
 
     styled_report = (
         report_df
         .style
         .background_gradient(
             cmap="RdYlGn",
-            subset=["precision", "recall", "f1-score"]
+            subset=["precision", "recall", "f1-score", "support"]
         )
         .format({
             "precision": "{:.3f}",
@@ -220,39 +228,41 @@ for model_name in selected_models:
     st.dataframe(styled_report, use_container_width=True)
 
     # --------------------------------------------------
-    # CONFUSION MATRIX
+    # CONFUSION MATRIX AND ROC CURVE
     # --------------------------------------------------
-    st.markdown("### 📉 Confusion Matrix")
+    
+    st.markdown("### 📊 Confusion Matrix & ROC Curve")
 
-    cm = confusion_matrix(y_test_enc, y_pred)
-    fig, ax = plt.subplots()
-    sns.heatmap(
-        cm, annot=True, fmt="d", cmap="Blues",
-        xticklabels=target_mapping.keys(),
-        yticklabels=target_mapping.keys(),
-        ax=ax
-    )
-    st.pyplot(fig)
+    col1, col2 = st.columns(2)
 
-    # --------------------------------------------------
-    # ROC CURVES
-    # --------------------------------------------------
-    if y_prob is not None:
-        st.markdown("### 📈 ROC Curves")
-
-        classes = np.unique(y_test_enc)
-        y_bin = label_binarize(y_test_enc, classes=classes)
-
+    with col1:
+        cm = confusion_matrix(y_test_enc, y_pred)
         fig, ax = plt.subplots()
-        for i, cls in enumerate(classes):
-            fpr, tpr, _ = roc_curve(y_bin[:, i], y_prob[:, i])
-            ax.plot(fpr, tpr, label=inverse_mapping[cls])
-
-        ax.plot([0, 1], [0, 1], "--")
-        ax.set_xlabel("False Positive Rate")
-        ax.set_ylabel("True Positive Rate")
-        ax.legend()
+        sns.heatmap(
+            cm, annot=True, fmt="d", cmap="Blues",
+            xticklabels=target_mapping.keys(),
+            yticklabels=target_mapping.keys(),
+            ax=ax
+        )
+        ax.set_title("Confusion Matrix")
         st.pyplot(fig)
+
+    with col2:
+        if y_prob is not None:
+            classes = np.unique(y_test_enc)
+            y_bin = label_binarize(y_test_enc, classes=classes)
+
+            fig, ax = plt.subplots()
+            for i, cls in enumerate(classes):
+                fpr, tpr, _ = roc_curve(y_bin[:, i], y_prob[:, i])
+                ax.plot(fpr, tpr, label=inverse_mapping[cls])
+
+            ax.plot([0, 1], [0, 1], "--")
+            ax.set_xlabel("False Positive Rate")
+            ax.set_ylabel("True Positive Rate")
+            ax.set_title("ROC Curves")
+            ax.legend()
+            st.pyplot(fig)
 
 # --------------------------------------------------
 # MODEL COMPARISON DASHBOARD
@@ -298,13 +308,3 @@ sns.barplot(data=plot_df, x="Model", y="Score", hue="Metric", ax=ax)
 plt.xticks(rotation=20)
 plt.tight_layout()
 st.pyplot(fig)
-
-# --------------------------------------------------
-# DOWNLOAD
-# --------------------------------------------------
-st.download_button(
-    "⬇️ Download Comparison CSV",
-    compare_df.to_csv(index=False),
-    "model_comparison.csv",
-    "text/csv"
-)
