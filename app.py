@@ -23,11 +23,14 @@ st.set_page_config(
 page_bg_img = '''
 <style>
 .stApp {
-background-image: url("https://images.unsplash.com/photo-1542281286-9e0a16bb7366");
-background-size: cover;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)),
+        url("https://unsplash.com/photos/a-view-of-a-mountain-range-with-snow-capped-mountains-in-the-background-sSqbZ9zI86E");
+    background-size: cover;
 }
 </style>
 '''
+
 
 st.markdown(page_bg_img, unsafe_allow_html=True)
 
