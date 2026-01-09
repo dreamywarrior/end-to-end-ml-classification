@@ -64,10 +64,10 @@ if uploaded_file:
     col1, col2, col3 = st.columns(3)
 
     col1.metric("Accuracy", accuracy_score(y_test_encoded, y_pred))
-    col1.metric("Precision", precision_score(y_test_encoded, y_pred, zero_division=0))
-    col1.metric("Recall", recall_score(y_test_encoded, y_pred, zero_division=0))
+    col1.metric("Precision", precision_score(y_test_encoded, y_pred, zero_division=0, average="weighted"))
+    col1.metric("Recall", recall_score(y_test_encoded, y_pred, zero_division=0, average="weighted"))
 
-    col2.metric("F1 Score", f1_score(y_test_encoded, y_pred, zero_division=0))
+    col2.metric("F1 Score", f1_score(y_test_encoded, y_pred, zero_division=0, average="weighted"))
     col2.metric("MCC", matthews_corrcoef(y_test_encoded, y_pred))
     col2.metric("AUC", auc)
 
