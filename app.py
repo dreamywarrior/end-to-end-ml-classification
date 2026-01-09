@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import (
     accuracy_score, roc_auc_score, precision_score,
     recall_score, f1_score, matthews_corrcoef,
-    confusion_matrix, plot_confusion_matrix
+    confusion_matrix, ConfusionMatrixDisplay
 )
 
 # Configure logging
@@ -95,5 +95,18 @@ if uploaded_file:
     col2.metric("AUC", round(auc, 5) if isinstance(auc, float) else auc)
 
     st.subheader("📉 Confusion Matrix")
-    plot_confusion_matrix(model, X_test, y_test_encoded, display_labels=["Dropout", "Graduate", "Enrolled"], cmap=plt.cm.Blues)
-    st.pyplot()
+    cm = confusion_matrix(y_test_encoded, y_pred)
+    
+    # Get unique class names from the mapping
+    class_names = sorted(target_mapping.keys(), key=lambda x: target_mapping[x])
+    
+    # Create a beautiful confusion matrix plot
+    fig, ax = plt.subplots(figsize=(10, 8))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', cbar=True,
+                xticklabels=class_names, yticklabels=class_names,
+                ax=ax, cbar_kws={'label': 'Count'})
+    ax.set_ylabel('True Label', fontsize=12, fontweight='bold')
+    ax.set_xlabel('Predicted Label', fontsize=12, fontweight='bold')
+    ax.set_title(f'Confusion Matrix - {model_choice}', fontsize=14, fontweight='bold')
+    plt.tight_layout()
+    st.pyplot(fig)
