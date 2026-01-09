@@ -20,18 +20,16 @@ st.set_page_config(
     layout="wide"
 )
 
-st.markdown(
-    """
-    <style>
-    .stApp {
-        background-image: url("resources/sk_background.jpg");
-        background-size: cover;
-        background-attachment: fixed;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+page_bg_img = '''
+<style>
+body {
+background-image: url("https://unsplash.com/photos/a-view-of-a-mountain-range-with-snow-capped-mountains-in-the-background-sSqbZ9zI86E");
+background-size: cover;
+}
+</style>
+'''
+
+st.markdown(page_bg_img, unsafe_allow_html=True)
 
 # --------------------------------------------------
 # MODEL METADATA
