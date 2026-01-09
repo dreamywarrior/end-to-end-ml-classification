@@ -213,7 +213,7 @@ for model_name in selected_models:
         })
     )
 
-    st.dataframe(styled_report, use_container_width=True)
+    st.dataframe(styled_report, width="stretch")
 
     # --------------------------------------------------
     # CONFUSION MATRIX AND ROC CURVE
@@ -282,7 +282,7 @@ st.dataframe(
     display_df.style
         .background_gradient(cmap="Blues", subset=selected_metrics)
         .format({m: "{:.4f}" for m in selected_metrics}),
-    use_container_width=True
+    width="stretch"
 )
 
 plot_df = display_df.melt(
