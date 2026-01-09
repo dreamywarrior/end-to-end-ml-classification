@@ -1,12 +1,18 @@
 import streamlit as st
 import pandas as pd
 import pickle
+import logging
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 from sklearn.metrics import (
     accuracy_score, roc_auc_score, precision_score,
     recall_score, f1_score, matthews_corrcoef,
     confusion_matrix
 )
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 st.set_page_config(page_title="ML Classification Model Evaluator", layout="wide")
 st.title("📊 ML Classification Model Evaluator")
@@ -37,12 +43,15 @@ model_map = {
 }
 
 if uploaded_file:
+    # Log the loading of the test data
+    logging.info('Loading test data...')
     data = pd.read_csv(uploaded_file)
 
     X_test = data.iloc[:, :-1]
     y_test = data.iloc[:, -1]
     
     # Load target class mapping CSV and encode target
+    logging.info('Encoding target variable...')
     mapping_df = pd.read_csv("model/target_class_encoding.csv")
     target_mapping = dict(zip(mapping_df['class'], mapping_df['encoded']))
     y_test_encoded = y_test.map(target_mapping).values
@@ -63,13 +72,34 @@ if uploaded_file:
 
     col1, col2, col3 = st.columns(3)
 
-    col1.metric("Accuracy", accuracy_score(y_test_encoded, y_pred))
-    col1.metric("Precision", precision_score(y_test_encoded, y_pred, zero_division=0, average="weighted"))
-    col1.metric("Recall", recall_score(y_test_encoded, y_pred, zero_division=0, average="weighted"))
+    accuracy = accuracy_score(y_test_encoded, y_pred)
+    precision = precision_score(y_test_encoded, y_pred, zero_division=0, average="weighted")
+    recall = recall_score(y_test_encoded, y_pred, zero_division=0, average="weighted")
+    f1 = f1_score(y_test_encoded, y_pred, zero_division=0, average="weighted")
 
-    col2.metric("F1 Score", f1_score(y_test_encoded, y_pred, zero_division=0, average="weighted"))
-    col2.metric("MCC", matthews_corrcoef(y_test_encoded, y_pred))
+    # Log metrics with 5 decimal places
+    logging.info(f'Accuracy: {accuracy:.5f}')
+    logging.info(f'Precision: {precision:.5f}')
+    logging.info(f'Recall: {recall:.5f}')
+    logging.info(f'F1 Score: {f1:.5f}')
+
+    col1.metric("Accuracy", round(accuracy, 5))
+    col1.metric("Precision", round(precision, 5))
+    col1.metric("Recall", round(recall, 5))
+
+    col2.metric("F1 Score", round(f1, 5))
+    col2.metric("MCC", round(matthews_corrcoef(y_test_encoded, y_pred), 5))
     col2.metric("AUC", auc)
 
     st.subheader("📉 Confusion Matrix")
-    st.write(confusion_matrix(y_test_encoded, y_pred))
+    
+    # Confusion Matrix
+    cm = confusion_matrix(y_test_encoded, y_pred)
+    plt.figure(figsize=(10, 7))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', cbar=False,
+                xticklabels=list(target_mapping.keys()),
+                yticklabels=list(target_mapping.keys()))
+    plt.ylabel('True Label')
+    plt.xlabel('Predicted Label')
+    plt.title('Confusion Matrix')
+    plt.show()
