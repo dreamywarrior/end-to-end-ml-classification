@@ -54,8 +54,7 @@ if uploaded_file:
     y_pred = model.predict(X_test)
 
     try:
-        y_prob = model.predict_proba(X_test)[:, 1]
-        st.write(f"Prediction Probabilities: {y_prob}")
+        y_prob = model.predict_proba(X_test)
         auc = roc_auc_score(y_test_encoded, y_prob, multi_class='ovr')
     except:
         auc = "N/A"
