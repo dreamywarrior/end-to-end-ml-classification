@@ -55,7 +55,7 @@ if uploaded_file:
 
     try:
         y_prob = model.predict_proba(X_test)[:, 1]
-        auc = roc_auc_score(y_test_encoded, y_prob)
+        auc = roc_auc_score(y_test_encoded, y_prob, multi_class='ovr')
     except:
         auc = "N/A"
 
