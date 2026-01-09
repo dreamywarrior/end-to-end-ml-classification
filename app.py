@@ -109,7 +109,7 @@ if uploaded_file is None:
         st.image(
             "resources/model_evaluator.jpg",
             caption="Evaluation Workflow",
-            use_container_width=True
+            width="stretch"
         )
 
     st.info("⬅️ Upload test data from the sidebar to begin")
