@@ -42,10 +42,12 @@ if uploaded_file:
     X_test = data.iloc[:, :-1]
     y_test = data.iloc[:, -1]
     
-    # Load label encoder and encode target
-    label_encoder = pickle.load(open("model/label_encoder.pkl", "rb"))
-    y_test_encoded = label_encoder.transform(y_test)
-
+    # Load target class mapping CSV and encode target
+    mapping_df = pd.read_csv("model/target_class_encoding.csv")
+    target_mapping = dict(zip(mapping_df['class'], mapping_df['encoded']))
+    y_test_encoded = y_test.map(target_mapping).values
+    st.write("✓ Test data and target variable loaded successfully.")
+    
     with open(f"model/{model_map[model_choice]}", "rb") as f:
         model = pickle.load(f)
 
@@ -70,4 +72,4 @@ if uploaded_file:
     col2.metric("AUC", auc)
 
     st.subheader("📉 Confusion Matrix")
-    st.write(confusion_matrix(y_test, y_pred))
+    st.write(confusion_matrix(y_test_encoded, y_pred))
