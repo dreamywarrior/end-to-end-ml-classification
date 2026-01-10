@@ -64,21 +64,6 @@ st.markdown("""
     div[data-testid="stAlert"] {
         border-radius: 10px;
     }
-            
-    table {
-        border-collapse: collapse;
-    }
-
-    th {
-        background-color: #f2f1ea;
-        color: #3f3a2c;
-    }
-
-    td {
-        background-color: #ffffff;
-        color: #3f3a2c;
-        border: 1px solid #e0ddd2;
-    }
     
     </style>
 """, unsafe_allow_html=True)
