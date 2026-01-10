@@ -120,10 +120,34 @@ td {
 /* -------------------------------------------------- */
 div[data-testid="stAlert"] {
     border-radius: 10px;
+}        
+
+/* Toolbar buttons */
+header button {
+    background-color: #3f3a2c !important;
+}
+
+/* SVG icons inside toolbar buttons */
+header button svg,
+header button svg path {
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
+}
+
+/* Overflow menu (three dots) */
+header [data-testid="stToolbar"] svg {
+    fill: #ffffff !important;
+}
+
+/* Sidebar collapse arrow */
+button[data-testid="collapsedControl"] svg {
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
 }
 
 </style>
 """, unsafe_allow_html=True)
+
 
 # --------------------------------------------------
 # MODEL METADATA
