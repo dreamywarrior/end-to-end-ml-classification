@@ -64,7 +64,19 @@ st.markdown("""
     div[data-testid="stAlert"] {
         border-radius: 10px;
     }
-    
+
+    div[data-testid="stDataFrame"] {
+        width: 100% !important;
+    }
+
+    div[data-testid="stDataFrame"] > div {
+        width: 100% !important;
+    }
+
+    div[data-testid="stDataFrame"] table {
+        width: 100% !important;
+    }            
+
     </style>
 """, unsafe_allow_html=True)
 
