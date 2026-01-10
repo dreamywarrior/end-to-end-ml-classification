@@ -41,7 +41,7 @@ st.markdown("""
     div[data-testid="stDataFrame"],
     div[data-testid="stExpander"],
     div[data-testid="stContainer"] {
-        background-color: #f6f5ee;
+        background-color: #ffffff;
         border: 1px solid #e6e4db;
         border-radius: 12px;
         padding: 12px;
@@ -81,6 +81,7 @@ st.markdown("""
         color: #3f3a2c;
         border: 1px solid #e0ddd2;
     }
+    
     </style>
 """, unsafe_allow_html=True)
 
