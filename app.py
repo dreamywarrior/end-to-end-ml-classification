@@ -76,6 +76,10 @@ st.markdown("""
     div[data-testid="stDataFrame"] table {
         width: 100% !important;
     }            
+            
+    span[data-baseweb="tag"] {
+        background-color: #d5a655 !important;
+    }
 
     </style>
 """, unsafe_allow_html=True)
@@ -188,8 +192,7 @@ st.sidebar.header("🤖 Model Selection")
 selected_models = st.sidebar.multiselect(
     "Select one or more models",
     list(MODEL_INFO.keys()),
-    default=["Logistic Regression"],
-    color="#d5a655"
+    default=["Logistic Regression"]
 )
 
 if not selected_models:
@@ -333,8 +336,7 @@ metric_map = {
 selected_metrics_labels = st.multiselect(
     "📌 Select metrics to compare",
     list(metric_map.keys()),
-    default=["Accuracy", "F1 Score"],
-    color="#d5a655"
+    default=["Accuracy", "F1 Score"]
 )
 
 selected_metrics = [metric_map[m] for m in selected_metrics_labels]
