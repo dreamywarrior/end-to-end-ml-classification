@@ -188,7 +188,8 @@ st.sidebar.header("🤖 Model Selection")
 selected_models = st.sidebar.multiselect(
     "Select one or more models",
     list(MODEL_INFO.keys()),
-    default=["Logistic Regression"]
+    default=["Logistic Regression"],
+    color="#d5a655"
 )
 
 if not selected_models:
@@ -332,7 +333,8 @@ metric_map = {
 selected_metrics_labels = st.multiselect(
     "📌 Select metrics to compare",
     list(metric_map.keys()),
-    default=["Accuracy", "F1 Score"]
+    default=["Accuracy", "F1 Score"],
+    color="#d5a655"
 )
 
 selected_metrics = [metric_map[m] for m in selected_metrics_labels]
