@@ -344,7 +344,7 @@ display_df = compare_df[["Model"] + selected_metrics]
 
 st.dataframe(
     display_df.style
-        .background_gradient(cmap="Blues", subset=selected_metrics)
+        .background_gradient(cmap="Greens", subset=selected_metrics)
         .format({m: "{:.4f}" for m in selected_metrics}),
     width="stretch"
 )
