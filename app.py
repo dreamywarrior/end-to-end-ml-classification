@@ -21,6 +21,51 @@ st.set_page_config(
     layout="wide"
 )
 
+st.markdown("""
+    <style>
+    /* App background */
+    .stApp {
+        background-color: #fbfbf7;
+        color: #3f3a2c;
+    }
+
+    /* Sidebar */
+    section[data-testid="stSidebar"] {
+        background-color: #f2f1ea;
+        border-right: 1px solid #e3e1d9;
+    }
+
+    /* Headings */
+    h1, h2, h3, h4 {
+        color: #3f3a2c;
+        font-weight: 600;
+    }
+
+    /* Cards / containers */
+    div[data-testid="stMetric"],
+    div[data-testid="stDataFrame"],
+    div[data-testid="stExpander"] {
+        background-color: #ffffff;
+        border: 1px solid #e6e4db;
+        border-radius: 12px;
+        padding: 12px;
+    }
+
+    /* Buttons */
+    button[kind="primary"] {
+        background-color: #3f3a2c;
+        color: #ffffff;
+        border-radius: 10px;
+    }
+
+    /* Info / warning boxes */
+    div[data-testid="stAlert"] {
+        border-radius: 10px;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+
 # --------------------------------------------------
 # MODEL METADATA
 # --------------------------------------------------
