@@ -21,78 +21,68 @@ st.set_page_config(
 )
 
 st.markdown("""
-<style>
+    <style>
+    .stApp {
+        background-color: #fbfbf7;
+        color: #3f3a2c;
+    }
 
-/* 🔒 LOCK BACKGROUND — prevents color change on scroll */
-html, body, #root, .stApp, .appview-container, .main {
-    background-color: #fbfbf7 !important;
-    color: #3f3a2c !important;
-}
+    section[data-testid="stSidebar"] {
+        background-color: #f2f1ea;
+        border-right: 1px solid #e3e1d9;
+    }
 
-/* Sidebar */
-section[data-testid="stSidebar"] {
-    background-color: #f2f1ea !important;
-    border-right: 1px solid #e3e1d9;
-}
+    h1, h2, h3, h4 {
+        color: #3f3a2c;
+        font-weight: 600;
+    }
 
-/* Headings */
-h1, h2, h3, h4 {
-    color: #3f3a2c;
-    font-weight: 600;
-}
+    div[data-testid="stMetric"],
+    div[data-testid="stDataFrame"],
+    div[data-testid="stExpander"],
+    div[data-testid="stContainer"] {
+        border: 1px solid #e6e4db;
+        border-radius: 12px;
+        padding: 12px;
+    }
+            
+    div[data-testid="stRadio"],
+    div[data-testid="stSelectbox"],
+    div[data-testid="stMultiSelect"] {
+        background-color: #f6f5ee;
+        border: 1px solid #e0ddd2;
+        border-radius: 12px;
+        padding: 10px;
+    }
 
-/* Cards / containers */
-div[data-testid="stMetric"],
-div[data-testid="stDataFrame"],
-div[data-testid="stExpander"],
-div[data-testid="stContainer"] {
-    background-color: #ffffff;
-    border: 1px solid #e6e4db;
-    border-radius: 12px;
-    padding: 12px;
-}
+    button[kind="primary"] {
+        background-color: #3f3a2c;
+        color: #ffffff;
+        border-radius: 10px;
+    }
 
-/* Inputs */
-div[data-testid="stRadio"],
-div[data-testid="stSelectbox"],
-div[data-testid="stMultiSelect"] {
-    background-color: #f6f5ee;
-    border: 1px solid #e0ddd2;
-    border-radius: 12px;
-    padding: 10px;
-}
+    div[data-testid="stAlert"] {
+        border-radius: 10px;
+    }
+            
+    table {
+        border-collapse: collapse;
+    }
 
-/* Primary buttons */
-button[kind="primary"] {
-    background-color: #3f3a2c;
-    color: #ffffff;
-    border-radius: 10px;
-}
+    th {
+        background-color: #f2f1ea;
+        color: #3f3a2c;
+    }
 
-/* Alerts */
-div[data-testid="stAlert"] {
-    border-radius: 10px;
-}
-
-/* Tables */
-table {
-    background-color: #ffffff;
-    border-collapse: collapse;
-}
-
-th {
-    background-color: #f2f1ea;
-    color: #3f3a2c;
-}
-
-td {
-    background-color: #ffffff;
-    color: #3f3a2c;
-    border: 1px solid #e0ddd2;
-}
-
-</style>
+    td {
+        background-color: #ffffff;
+        color: #3f3a2c;
+        border: 1px solid #e0ddd2;
+    }
+    
+    </style>
 """, unsafe_allow_html=True)
+
 
 # --------------------------------------------------
 # MODEL METADATA
