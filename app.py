@@ -21,69 +21,109 @@ st.set_page_config(
 )
 
 st.markdown("""
-    <style>
-    .stApp {
-        background-color: #fbfbf7;
-        color: #3f3a2c;
-    }
+<style>
 
-    section[data-testid="stSidebar"] {
-        background-color: #f2f1ea;
-        border-right: 1px solid #e3e1d9;
-    }
+/* -------------------------------------------------- */
+/* GLOBAL BACKGROUND – FIX SCROLL COLOR SHIFT */
+/* -------------------------------------------------- */
+html, body, #root, .stApp, .appview-container {
+    background-color: #fbfbf7 !important;
+    color: #3f3a2c !important;
+}
 
-    h1, h2, h3, h4 {
-        color: #3f3a2c;
-        font-weight: 600;
-    }
+/* -------------------------------------------------- */
+/* SIDEBAR */
+/* -------------------------------------------------- */
+section[data-testid="stSidebar"] {
+    background-color: #f2f1ea !important;
+    border-right: 1px solid #e3e1d9;
+}
 
-    div[data-testid="stMetric"],
-    div[data-testid="stDataFrame"],
-    div[data-testid="stExpander"],
-    div[data-testid="stContainer"] {
-        background-color: #f6f5ee;
-        border: 1px solid #e6e4db;
-        border-radius: 12px;
-        padding: 12px;
-    }
-            
-    div[data-testid="stRadio"],
-    div[data-testid="stSelectbox"],
-    div[data-testid="stMultiSelect"] {
-        background-color: #f6f5ee;
-        border: 1px solid #e0ddd2;
-        border-radius: 12px;
-        padding: 10px;
-    }
+/* -------------------------------------------------- */
+/* HEADINGS */
+/* -------------------------------------------------- */
+h1, h2, h3, h4 {
+    color: #3f3a2c !important;
+    font-weight: 600;
+}
 
-    button[kind="primary"] {
-        background-color: #3f3a2c;
-        color: #ffffff;
-        border-radius: 10px;
-    }
+/* -------------------------------------------------- */
+/* CONTAINERS / CARDS */
+/* -------------------------------------------------- */
+div[data-testid="stMetric"],
+div[data-testid="stDataFrame"],
+div[data-testid="stExpander"],
+div[data-testid="stContainer"] {
+    background-color: #ffffff !important;
+    border: 1px solid #e6e4db;
+    border-radius: 12px;
+    padding: 12px;
+}
 
-    div[data-testid="stAlert"] {
-        border-radius: 10px;
-    }
-            
-    table {
-        background-color: #ffffff;
-        border-collapse: collapse;
-    }
+/* -------------------------------------------------- */
+/* 🔥 REMOVE RED FROM MULTISELECT / PILLS / TAGS */
+/* -------------------------------------------------- */
+span[data-baseweb="tag"] {
+    background-color: #e8e6dc !important;
+    color: #3f3a2c !important;
+    border-radius: 8px !important;
+    border: 1px solid #d6d3c6 !important;
+}
 
-    th {
-        background-color: #f2f1ea;
-        color: #3f3a2c;
-    }
+/* Tag close (×) button */
+span[data-baseweb="tag"] svg {
+    fill: #6b6654 !important;
+}
 
-    td {
-        background-color: #ffffff;
-        color: #3f3a2c;
-        border: 1px solid #e0ddd2;
-    }
-    </style>
+/* -------------------------------------------------- */
+/* SELECTBOX / MULTISELECT INPUT AREA */
+/* -------------------------------------------------- */
+div[data-baseweb="select"] > div {
+    background-color: #ffffff !important;
+    border-radius: 10px !important;
+    border: 1px solid #d6d3c6 !important;
+}
+
+/* -------------------------------------------------- */
+/* BUTTONS (REMOVE RED) */
+/* -------------------------------------------------- */
+button {
+    background-color: #3f3a2c !important;
+    color: #ffffff !important;
+    border-radius: 10px !important;
+    border: none !important;
+}
+
+button:hover {
+    background-color: #2f2a20 !important;
+}
+
+/* -------------------------------------------------- */
+/* TABLES */
+/* -------------------------------------------------- */
+table {
+    background-color: #ffffff !important;
+}
+
+th {
+    background-color: #f2f1ea !important;
+    color: #3f3a2c !important;
+}
+
+td {
+    color: #3f3a2c !important;
+    border: 1px solid #e0ddd2 !important;
+}
+
+/* -------------------------------------------------- */
+/* ALERTS */
+/* -------------------------------------------------- */
+div[data-testid="stAlert"] {
+    border-radius: 10px;
+}
+
+</style>
 """, unsafe_allow_html=True)
-
 
 # --------------------------------------------------
 # MODEL METADATA
