@@ -41,10 +41,19 @@ st.markdown("""
     div[data-testid="stDataFrame"],
     div[data-testid="stExpander"],
     div[data-testid="stContainer"] {
-        background-color: #ffffff;
+        background-color: #f6f5ee;
         border: 1px solid #e6e4db;
         border-radius: 12px;
         padding: 12px;
+    }
+            
+    div[data-testid="stRadio"],
+    div[data-testid="stSelectbox"],
+    div[data-testid="stMultiSelect"] {
+        background-color: #f6f5ee;
+        border: 1px solid #e0ddd2;
+        border-radius: 12px;
+        padding: 10px;
     }
 
     button[kind="primary"] {
@@ -55,6 +64,22 @@ st.markdown("""
 
     div[data-testid="stAlert"] {
         border-radius: 10px;
+    }
+            
+    table {
+        background-color: #ffffff;
+        border-collapse: collapse;
+    }
+
+    th {
+        background-color: #f2f1ea;
+        color: #3f3a2c;
+    }
+
+    td {
+        background-color: #ffffff;
+        color: #3f3a2c;
+        border: 1px solid #e0ddd2;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -242,7 +267,7 @@ for model_name in selected_models:
         report_df
         .style
         .background_gradient(
-            cmap="RdYlGn",
+            cmap="Greens",
             subset=["precision", "recall", "f1-score"]
         )
         .format({
@@ -266,7 +291,8 @@ for model_name in selected_models:
         cm = confusion_matrix(y_test_enc, y_pred)
         fig, ax = plt.subplots()
         sns.heatmap(
-            cm, annot=True, fmt="d", cmap="Blues",
+            cm, annot=True, fmt="d", cmap="YlGnBu",
+            cbar=False, linewidths=0.5, linecolor="#e0ddd2",
             xticklabels=target_mapping.keys(),
             yticklabels=target_mapping.keys(),
             ax=ax
