@@ -261,6 +261,7 @@ for model_name in selected_models:
         output_dict=True
     )
     report_df = pd.DataFrame(report).transpose()
+    report_df = report_df.drop(index="accuracy", errors="ignore")
 
     styled_report = (
         report_df
