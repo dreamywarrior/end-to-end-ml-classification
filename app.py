@@ -273,6 +273,7 @@ for model_name in selected_models:
             "precision": "{:.3f}",
             "recall": "{:.3f}",
             "f1-score": "{:.3f}",
+            "support": "{:.0f}"
         })
     )
 
