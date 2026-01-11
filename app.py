@@ -188,7 +188,7 @@ y_test_enc = y_test.map(target_mapping)
 # --------------------------------------------------
 # MODEL SELECTION
 # --------------------------------------------------
-st.sidebar.header("🤖 Model Selection")
+st.sidebar.header("🎰 Model Selection")
 
 selected_models = st.sidebar.multiselect(
     "Select one or more models",
@@ -209,7 +209,7 @@ comparison_results = []
 # MODEL EVALUATION LOOP
 # --------------------------------------------------
 for model_name in selected_models:
-    st.subheader(f"🤖 {model_name}")
+    st.subheader(f"🧮 {model_name}")
     st.info(MODEL_INFO[model_name][1])
 
     with open(f"model/{MODEL_INFO[model_name][0]}", "rb") as f:
@@ -253,7 +253,7 @@ for model_name in selected_models:
     # --------------------------------------------------
     # CLASS-WISE METRICS (GRADIENT)
     # --------------------------------------------------
-    st.markdown("### 📋 Class-wise Metrics")
+    st.markdown("### 📋 Classification Report")
 
     report = classification_report(
         y_test_enc, y_pred,
@@ -261,15 +261,13 @@ for model_name in selected_models:
         output_dict=True
     )
     report_df = pd.DataFrame(report).transpose()
-    report_df = report_df.drop(index="accuracy", errors="ignore")
-    report_df = report_df[["precision", "recall", "f1-score"]]
 
     styled_report = (
         report_df
         .style
         .background_gradient(
             cmap="Greens",
-            subset=["precision", "recall", "f1-score"]
+            subset=["precision", "recall", "f1-score", "support"]
         )
         .format({
             "precision": "{:.3f}",
