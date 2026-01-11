@@ -384,4 +384,4 @@ fig.update_traces(
     "Score: %{y:.4f}<extra></extra>"
 )
 
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig, width="stretch")
