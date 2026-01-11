@@ -4,6 +4,7 @@ import pickle
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
+import plotly.express as px
 
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score, f1_score,
@@ -356,7 +357,31 @@ plot_df = display_df.melt(
     value_name="Score"
 )
 
-fig, ax = plt.subplots(figsize=(12, 6))
-sns.barplot(data=plot_df, x="Model", y="Score", hue="Metric", ax=ax)
-plt.tight_layout()
-st.pyplot(fig)
+fig = px.bar(
+    plot_df,
+    x="Model",
+    y="Score",
+    color="Metric",
+    barmode="group",
+    text_auto=".4f"
+)
+
+fig.update_layout(
+    title="Model Comparison",
+    xaxis_title="Model",
+    yaxis_title="Score",
+    yaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)"),
+    xaxis=dict(showgrid=True, gridcolor="rgba(0,0,0,0.15)"),
+    plot_bgcolor="white",
+    paper_bgcolor="white",
+    height=500
+)
+
+fig.update_traces(
+    hovertemplate=
+    "<b>%{x}</b><br>" +
+    "Metric: %{legendgroup}<br>" +
+    "Score: %{y:.4f}<extra></extra>"
+)
+
+st.plotly_chart(fig, use_container_width=True)
