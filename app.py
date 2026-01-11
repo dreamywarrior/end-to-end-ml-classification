@@ -377,11 +377,4 @@ fig.update_layout(
     height=500
 )
 
-fig.update_traces(
-    hovertemplate=
-    "<b>%{x}</b><br>" +
-    "Metric: %{legendgroup}<br>" +
-    "Score: %{y:.4f}<extra></extra>"
-)
-
 st.plotly_chart(fig, width="stretch")
