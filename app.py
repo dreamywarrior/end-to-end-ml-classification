@@ -219,7 +219,7 @@ for model_name in selected_models:
 
     try:
         y_prob = model.predict_proba(X_test)
-        auc = roc_auc_score(y_test_enc, y_prob, multi_class="ovr")
+        auc = roc_auc_score(y_test_enc, y_prob, multi_class="ovr", average="weighted")
     except:
         y_prob, auc = None, None
 
