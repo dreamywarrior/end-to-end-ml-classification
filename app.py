@@ -218,6 +218,7 @@ if not selected_models:
 # STORAGE
 # --------------------------------------------------
 comparison_results = []
+classification_reports = {}
 
 # --------------------------------------------------
 # MODEL EVALUATION LOOP
@@ -276,6 +277,12 @@ for model_name in selected_models:
     )
     report_df = pd.DataFrame(report).transpose()
     report_df = report_df.drop(index="accuracy", errors="ignore")
+    csv_report = (
+        report_df
+        .reset_index()
+        .rename(columns={"index": "Class"})
+    )
+    classification_reports[model_name] = csv_report
 
     # --------------------------------------------------
     # DOWNLOAD CLASSIFICATION REPORTS
@@ -446,6 +453,17 @@ with st.sidebar.expander("📥 Download Test Reports"):
             "model_comparison_selected_metrics.csv",
             display_df.to_csv(index=False)
         )
+        # Per-model classification reports
+        for model_name, report_df in classification_reports.items():
+            file_name = (
+                f"classification_reports/"
+                f"{model_name.lower().replace(' ', '_')}_classification_report.csv"
+            )
+
+            zipf.writestr(
+                file_name,
+                report_df.to_csv(index=False)
+            )
     zip_buffer.seek(0)
     st.download_button(
         label="📦 Full Evaluation Report (ZIP)",
