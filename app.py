@@ -127,6 +127,18 @@ st.title("📊 ML Classification Model Evaluator")
 st.sidebar.header("📂 Upload Test Data")
 uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
 
+st.sidebar.markdown("— or —")
+st.sidebar.caption("Use this sample if you don’t have test data ready")
+
+sample_df = pd.read_csv("data/test_data.csv")
+
+st.sidebar.download_button(
+    label="⬇️ Download Sample Test Data",
+    data=sample_df.to_csv(index=False),
+    file_name="sample_test_data.csv",
+    mime="text/csv"
+)
+
 # --------------------------------------------------
 # LANDING / INTRO SECTION
 # --------------------------------------------------
