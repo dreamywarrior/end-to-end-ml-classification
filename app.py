@@ -318,42 +318,83 @@ for model_name in selected_models:
     st.dataframe(styled_report, width="stretch")
 
     # --------------------------------------------------
-    # CONFUSION MATRIX AND ROC CURVE
+    # CONFUSION MATRIX & ROC CURVE (PLOTLY)
     # --------------------------------------------------
-    
     st.markdown("### 📊 Confusion Matrix & ROC Curve")
 
     col1, col2 = st.columns(2)
 
+    # ---------- Confusion Matrix (Plotly) ----------
     with col1:
         cm = confusion_matrix(y_test_enc, y_pred)
-        fig, ax = plt.subplots()
-        sns.heatmap(
-            cm, annot=True, fmt="d", cmap="YlGnBu",
-            cbar=False, linewidths=0.5, linecolor="#e0ddd2",
-            xticklabels=target_mapping.keys(),
-            yticklabels=target_mapping.keys(),
-            ax=ax
+        cm_df = pd.DataFrame(
+            cm,
+            index=target_mapping.keys(),
+            columns=target_mapping.keys()
         )
-        ax.set_title("Confusion Matrix")
-        st.pyplot(fig)
 
+        fig_cm = px.imshow(
+            cm_df,
+            text_auto=True,
+            color_continuous_scale="YlGnBu",
+            labels=dict(x="Predicted Label", y="True Label", color="Count"),
+            title="Confusion Matrix"
+        )
+
+        fig_cm.update_layout(
+            height=420,
+            margin=dict(l=40, r=40, t=60, b=40),
+            coloraxis_colorbar=dict(title="Samples")
+        )
+
+        st.plotly_chart(fig_cm, use_container_width=True)
+
+    # ---------- ROC Curve (Plotly) ----------
     with col2:
         if y_prob is not None:
             classes = np.unique(y_test_enc)
             y_bin = label_binarize(y_test_enc, classes=classes)
 
-            fig, ax = plt.subplots()
+            roc_data = []
+
             for i, cls in enumerate(classes):
                 fpr, tpr, _ = roc_curve(y_bin[:, i], y_prob[:, i])
-                ax.plot(fpr, tpr, label=inverse_mapping[cls])
+                roc_data.append(
+                    pd.DataFrame({
+                        "False Positive Rate": fpr,
+                        "True Positive Rate": tpr,
+                        "Class": inverse_mapping[cls]
+                    })
+                )
 
-            ax.plot([0, 1], [0, 1], "--")
-            ax.set_xlabel("False Positive Rate")
-            ax.set_ylabel("True Positive Rate")
-            ax.set_title("ROC Curves")
-            ax.legend()
-            st.pyplot(fig)
+            roc_df = pd.concat(roc_data)
+
+            fig_roc = px.line(
+                roc_df,
+                x="False Positive Rate",
+                y="True Positive Rate",
+                color="Class",
+                title="ROC Curves (One-vs-Rest)"
+            )
+
+            # Diagonal reference line
+            fig_roc.add_shape(
+                type="line",
+                line=dict(dash="dash"),
+                x0=0, y0=0, x1=1, y1=1
+            )
+
+            fig_roc.update_layout(
+                height=420,
+                xaxis=dict(range=[0, 1]),
+                yaxis=dict(range=[0, 1]),
+                legend_title_text="Class",
+                margin=dict(l=40, r=40, t=60, b=40)
+            )
+
+            st.plotly_chart(fig_roc, use_container_width=True)
+        else:
+            st.info("ROC curve not available for this model.")
 
 # --------------------------------------------------
 # MODEL COMPARISON DASHBOARD
