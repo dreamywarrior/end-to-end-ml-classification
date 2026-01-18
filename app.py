@@ -5,6 +5,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 import plotly.express as px
+import zipfile
+import io
 
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score, f1_score,
@@ -216,6 +218,7 @@ if not selected_models:
 # STORAGE
 # --------------------------------------------------
 comparison_results = []
+classification_reports = {}
 
 # --------------------------------------------------
 # MODEL EVALUATION LOOP
@@ -274,6 +277,28 @@ for model_name in selected_models:
     )
     report_df = pd.DataFrame(report).transpose()
     report_df = report_df.drop(index="accuracy", errors="ignore")
+    csv_report = (
+        report_df
+        .reset_index()
+        .rename(columns={"index": "Class"})
+    )
+    classification_reports[model_name] = csv_report
+
+    # --------------------------------------------------
+    # DOWNLOAD CLASSIFICATION REPORTS
+    # --------------------------------------------------
+    csv_report = report_df.reset_index().rename(columns={"index": "Class"})
+
+    st.download_button(
+        label=f"⬇️ Download {model_name} Classification Report",
+        data=csv_report.to_csv(index=False),
+        file_name=f"{model_name.lower().replace(' ', '_')}_classification_report.csv",
+        mime="text/csv"
+    )
+
+    # --------------------------------------------------
+    # STYLED CLASSIFICATION REPORT
+    # --------------------------------------------------
 
     styled_report = (
         report_df
@@ -293,42 +318,83 @@ for model_name in selected_models:
     st.dataframe(styled_report, width="stretch")
 
     # --------------------------------------------------
-    # CONFUSION MATRIX AND ROC CURVE
+    # CONFUSION MATRIX & ROC CURVE (PLOTLY)
     # --------------------------------------------------
-    
     st.markdown("### 📊 Confusion Matrix & ROC Curve")
 
     col1, col2 = st.columns(2)
 
+    # ---------- Confusion Matrix (Plotly) ----------
     with col1:
         cm = confusion_matrix(y_test_enc, y_pred)
-        fig, ax = plt.subplots()
-        sns.heatmap(
-            cm, annot=True, fmt="d", cmap="YlGnBu",
-            cbar=False, linewidths=0.5, linecolor="#e0ddd2",
-            xticklabels=target_mapping.keys(),
-            yticklabels=target_mapping.keys(),
-            ax=ax
+        cm_df = pd.DataFrame(
+            cm,
+            index=target_mapping.keys(),
+            columns=target_mapping.keys()
         )
-        ax.set_title("Confusion Matrix")
-        st.pyplot(fig)
 
+        fig_cm = px.imshow(
+            cm_df,
+            text_auto=True,
+            color_continuous_scale="YlGnBu",
+            labels=dict(x="Predicted Label", y="True Label", color="Count"),
+            title="Confusion Matrix"
+        )
+
+        fig_cm.update_layout(
+            height=420,
+            margin=dict(l=40, r=40, t=60, b=40),
+            coloraxis_colorbar=dict(title="Samples")
+        )
+
+        st.plotly_chart(fig_cm, use_container_width=True)
+
+    # ---------- ROC Curve (Plotly) ----------
     with col2:
         if y_prob is not None:
             classes = np.unique(y_test_enc)
             y_bin = label_binarize(y_test_enc, classes=classes)
 
-            fig, ax = plt.subplots()
+            roc_data = []
+
             for i, cls in enumerate(classes):
                 fpr, tpr, _ = roc_curve(y_bin[:, i], y_prob[:, i])
-                ax.plot(fpr, tpr, label=inverse_mapping[cls])
+                roc_data.append(
+                    pd.DataFrame({
+                        "False Positive Rate": fpr,
+                        "True Positive Rate": tpr,
+                        "Class": inverse_mapping[cls]
+                    })
+                )
 
-            ax.plot([0, 1], [0, 1], "--")
-            ax.set_xlabel("False Positive Rate")
-            ax.set_ylabel("True Positive Rate")
-            ax.set_title("ROC Curves")
-            ax.legend()
-            st.pyplot(fig)
+            roc_df = pd.concat(roc_data)
+
+            fig_roc = px.line(
+                roc_df,
+                x="False Positive Rate",
+                y="True Positive Rate",
+                color="Class",
+                title="ROC Curves (One-vs-Rest)"
+            )
+
+            # Diagonal reference line
+            fig_roc.add_shape(
+                type="line",
+                line=dict(dash="dash"),
+                x0=0, y0=0, x1=1, y1=1
+            )
+
+            fig_roc.update_layout(
+                height=420,
+                xaxis=dict(range=[0, 1]),
+                yaxis=dict(range=[0, 1]),
+                legend_title_text="Class",
+                margin=dict(l=40, r=40, t=60, b=40)
+            )
+
+            st.plotly_chart(fig_roc, use_container_width=True)
+        else:
+            st.info("ROC curve not available for this model.")
 
 # --------------------------------------------------
 # MODEL COMPARISON DASHBOARD
@@ -390,3 +456,64 @@ fig.update_layout(
 )
 
 st.plotly_chart(fig, width="stretch")
+
+
+# --------------------------------------------------
+# SIDEBAR – DOWNLOAD TEST REPORTS
+# --------------------------------------------------
+with st.sidebar.expander("📥 Download Test Reports"):
+
+    # ---------- Model Metrics Report ----------
+    comparison_df = pd.DataFrame(comparison_results)
+
+    st.download_button(
+        label="⬇️ Model Metrics Report (CSV)",
+        data=comparison_df.to_csv(index=False),
+        file_name="model_metrics_report.csv",
+        mime="text/csv",
+        help="Download accuracy, precision, recall, F1, MCC, and AUC for all models"
+    )
+
+    # ---------- Selected Metrics Comparison ----------
+    st.download_button(
+        label="⬇️ Model Comparison Table (CSV)",
+        data=display_df.to_csv(index=False),
+        file_name="model_comparison_selected_metrics.csv",
+        mime="text/csv",
+        help="Download the selected comparison metrics"
+    )
+
+    # ---------- Full Evaluation ZIP (Optional) ----------
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zipf:
+        zipf.writestr(
+            "model_metrics_report.csv",
+            comparison_df.to_csv(index=False)
+        )
+        zipf.writestr(
+            "model_comparison_selected_metrics.csv",
+            display_df.to_csv(index=False)
+        )
+        # Per-model classification reports
+        for model_name, report_df in classification_reports.items():
+            file_name = (
+                f"classification_reports/"
+                f"{model_name.lower().replace(' ', '_')}_classification_report.csv"
+            )
+
+            zipf.writestr(
+                file_name,
+                report_df.to_csv(index=False)
+            )
+    zip_buffer.seek(0)
+    st.download_button(
+        label="📦 Full Evaluation Report (ZIP)",
+        data=zip_buffer,
+        file_name="ml_model_evaluation_reports.zip",
+        mime="application/zip",
+        help="Download all evaluation reports in a single ZIP"
+    )
+
+# --------------------------------------------------
+# END OF APP
+# --------------------------------------------------
