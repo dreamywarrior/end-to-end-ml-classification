@@ -5,6 +5,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 import plotly.express as px
+import zipfile
+import io
 
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score, f1_score,
@@ -275,6 +277,22 @@ for model_name in selected_models:
     report_df = pd.DataFrame(report).transpose()
     report_df = report_df.drop(index="accuracy", errors="ignore")
 
+    # --------------------------------------------------
+    # DOWNLOAD CLASSIFICATION REPORTS
+    # --------------------------------------------------
+    csv_report = report_df.reset_index().rename(columns={"index": "Class"})
+
+    st.download_button(
+        label=f"⬇️ Download {model_name} Classification Report",
+        data=csv_report.to_csv(index=False),
+        file_name=f"{model_name.lower().replace(' ', '_')}_classification_report.csv",
+        mime="text/csv"
+    )
+
+    # --------------------------------------------------
+    # STYLED CLASSIFICATION REPORT
+    # --------------------------------------------------
+
     styled_report = (
         report_df
         .style
@@ -390,3 +408,53 @@ fig.update_layout(
 )
 
 st.plotly_chart(fig, width="stretch")
+
+
+# --------------------------------------------------
+# SIDEBAR – DOWNLOAD TEST REPORTS
+# --------------------------------------------------
+with st.sidebar.expander("📥 Download Test Reports"):
+
+    # ---------- Model Metrics Report ----------
+    comparison_df = pd.DataFrame(comparison_results)
+
+    st.download_button(
+        label="⬇️ Model Metrics Report (CSV)",
+        data=comparison_df.to_csv(index=False),
+        file_name="model_metrics_report.csv",
+        mime="text/csv",
+        help="Download accuracy, precision, recall, F1, MCC, and AUC for all models"
+    )
+
+    # ---------- Selected Metrics Comparison ----------
+    st.download_button(
+        label="⬇️ Model Comparison Table (CSV)",
+        data=display_df.to_csv(index=False),
+        file_name="model_comparison_selected_metrics.csv",
+        mime="text/csv",
+        help="Download the selected comparison metrics"
+    )
+
+    # ---------- Full Evaluation ZIP (Optional) ----------
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zipf:
+        zipf.writestr(
+            "model_metrics_report.csv",
+            comparison_df.to_csv(index=False)
+        )
+        zipf.writestr(
+            "model_comparison_selected_metrics.csv",
+            display_df.to_csv(index=False)
+        )
+    zip_buffer.seek(0)
+    st.download_button(
+        label="📦 Full Evaluation Report (ZIP)",
+        data=zip_buffer,
+        file_name="ml_model_evaluation_reports.zip",
+        mime="application/zip",
+        help="Download all evaluation reports in a single ZIP"
+    )
+
+# --------------------------------------------------
+# END OF APP
+# --------------------------------------------------
