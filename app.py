@@ -126,6 +126,13 @@ st.title("📊 ML Classification Model Evaluator")
 # --------------------------------------------------
 # SIDEBAR – DATA UPLOAD
 # --------------------------------------------------
+st.sidebar.header("⚙️ View Options")
+show_dataset_info = st.sidebar.toggle(
+    "Show Dataset Info",
+    value=True,
+    help="Toggle dataset description for evaluators"
+)
+
 st.sidebar.header("📂 Upload Test Data")
 uploaded_file = st.sidebar.file_uploader("Upload CSV", type=["csv"])
 
@@ -140,6 +147,100 @@ st.sidebar.download_button(
     file_name="sample_test_data.csv",
     mime="text/csv"
 )
+
+# --------------------------------------------------
+# DATASET INFORMATION
+# --------------------------------------------------
+if show_dataset_info:
+    data = pd.read_csv("data/train_data.csv")
+    X_train = data.iloc[:, :-1]
+    y_train = data.iloc[:, -1]
+    st.header("📘 Dataset Information")
+    with st.expander("📚 Predict Students' Dropout and Academic Success", expanded=True):
+        col1, col2 = st.columns([3, 2])
+        with col1:
+            st.markdown("""
+            **Dataset Source:** UCI Machine Learning Repository  
+
+            This dataset focuses on predicting **student academic outcomes**
+            using demographic, socioeconomic, and academic performance data.
+
+            **Objective:**  
+            Early identification of students at risk of **dropping out** to
+            enable timely academic intervention.
+
+            **ML Task:** Multi-class Classification
+            """)
+        with col2:
+            st.metric("Total Students", data.shape[0])
+            st.metric("Input Features", data.shape[1] - 1)
+            st.metric("Target Classes", y_train.nunique())
+            st.metric("Missing Values", int(data.isnull().sum().sum()))
+
+    with st.expander("📊 Target Class Distribution"):
+        class_counts = (
+            y_train.value_counts()
+            .reset_index()
+            .rename(columns={"index": "Class", y_train.name: "Count"})
+        )
+        fig = px.bar(
+            class_counts,
+            x="Class",
+            y="Count",
+            text="Count",
+            title="Student Academic Outcome Distribution"
+        )
+        fig.update_layout(
+            height=400,
+            yaxis_title="Number of Students",
+            xaxis_title="Academic Outcome"
+        )
+        st.plotly_chart(fig, use_container_width=True)
+        st.dataframe(
+            class_counts
+            .style
+            .background_gradient(cmap="Greens", subset=["Count"]),
+            use_container_width=True
+        )
+
+    with st.expander("🧬 Feature Groups (36 Input Features)"):
+        def feature_table(title, features):
+            df = pd.DataFrame({"Feature Name": features})
+            st.subheader(title)
+            st.dataframe(
+                df.style
+                .set_properties(**{"text-align": "left"})
+                .background_gradient(cmap="Greens"),
+                use_container_width=True
+            )
+        feature_table("👤 Demographic Features", [
+            "Age at enrollment",
+            "Gender",
+            "Marital status",
+            "Nationality"
+        ])
+        feature_table("🏫 Academic Background", [
+            "Course",
+            "Previous qualification",
+            "Admission grade",
+            "Daytime/evening attendance"
+        ])
+        feature_table("👨‍👩‍👧 Socioeconomic Factors", [
+            "Mother qualification",
+            "Father qualification",
+            "Mother occupation",
+            "Father occupation",
+            "Scholarship holder",
+            "Tuition fees up to date"
+        ])
+        feature_table("📊 Academic Performance", [
+            "Curricular units 1st semester (credited)",
+            "Curricular units 1st semester (approved)",
+            "Curricular units 1st semester (grade)",
+            "Curricular units 2nd semester (credited)",
+            "Curricular units 2nd semester (approved)",
+            "Curricular units 2nd semester (grade)"
+        ])
 
 # --------------------------------------------------
 # LANDING / INTRO SECTION
