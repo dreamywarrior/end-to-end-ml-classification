@@ -35,7 +35,7 @@ The dataset includes demographic, socioeconomic, and academic performance featur
 
 **Dataset Statistics:**
 
-- **Total Instances:** 4,424
+- **Total Instances:** 4,424 (3539 - Train; 885 - Test)
 - **Features:** 36
 - **Classes:** 3 (Dropout, Enrolled, Graduate)
 - **Missing Values:** None
