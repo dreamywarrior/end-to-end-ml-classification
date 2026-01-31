@@ -129,8 +129,7 @@ st.title("📊 ML Classification Model Evaluator")
 st.sidebar.header("⚙️ View Options")
 show_dataset_info = st.sidebar.toggle(
     "Show Dataset Info",
-    value=True,
-    help="Toggle dataset description for evaluators"
+    value=False
 )
 
 st.sidebar.header("📂 Upload Test Data")
@@ -162,27 +161,33 @@ if show_dataset_info:
             st.markdown("""
             **Dataset Source:** UCI Machine Learning Repository  
 
-            This dataset focuses on predicting **student academic outcomes**
-            using demographic, socioeconomic, and academic performance data.
+            This dataset is designed to support the prediction of **student academic outcomes**
+            by combining **demographic, socioeconomic, and academic performance indicators**
+            collected at the time of enrollment and during the first year of study.
+
+            The data originates from a higher education institution and integrates information
+            from multiple academic and administrative databases, providing a comprehensive
+            view of each student's educational profile.
 
             **Objective:**  
-            Early identification of students at risk of **dropping out** to
-            enable timely academic intervention.
+            To enable **early identification of students at risk of dropping out**, allowing
+            institutions to design targeted academic interventions, improve student retention,
+            and enhance overall graduation rates.
 
-            **ML Task:** Multi-class Classification
+            **Machine Learning Task:**  
+            - **Problem Type:** Multi-class Classification  
+            - **Target Classes:** Dropout, Enrolled, Graduate  
+            - **Learning Goal:** Model complex relationships between student characteristics
+            and academic success outcomes.
             """)
         with col2:
             st.metric("Total Students", data.shape[0])
             st.metric("Input Features", data.shape[1] - 1)
             st.metric("Target Classes", y_train.nunique())
-            st.metric("Missing Values", int(data.isnull().sum().sum()))
 
     with st.expander("📊 Target Class Distribution"):
-        class_counts = (
-            y_train.value_counts()
-            .reset_index()
-            .rename(columns={"index": "Class", y_train.name: "Count"})
-        )
+        class_counts = y_train.value_counts().reset_index()
+        class_counts.columns = ["Class", "Count"]
         fig = px.bar(
             class_counts,
             x="Class",
