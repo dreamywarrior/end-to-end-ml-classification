@@ -201,51 +201,6 @@ if show_dataset_info:
             xaxis_title="Academic Outcome"
         )
         st.plotly_chart(fig, use_container_width=True)
-        st.dataframe(
-            class_counts
-            .style
-            .background_gradient(cmap="Greens", subset=["Count"]),
-            use_container_width=True
-        )
-
-    with st.expander("🧬 Feature Groups (36 Input Features)"):
-        def feature_table(title, features):
-            df = pd.DataFrame({"Feature Name": features})
-            st.subheader(title)
-            st.dataframe(
-                df.style
-                .set_properties(**{"text-align": "left"})
-                .background_gradient(cmap="Greens"),
-                use_container_width=True
-            )
-        feature_table("👤 Demographic Features", [
-            "Age at enrollment",
-            "Gender",
-            "Marital status",
-            "Nationality"
-        ])
-        feature_table("🏫 Academic Background", [
-            "Course",
-            "Previous qualification",
-            "Admission grade",
-            "Daytime/evening attendance"
-        ])
-        feature_table("👨‍👩‍👧 Socioeconomic Factors", [
-            "Mother qualification",
-            "Father qualification",
-            "Mother occupation",
-            "Father occupation",
-            "Scholarship holder",
-            "Tuition fees up to date"
-        ])
-        feature_table("📊 Academic Performance", [
-            "Curricular units 1st semester (credited)",
-            "Curricular units 1st semester (approved)",
-            "Curricular units 1st semester (grade)",
-            "Curricular units 2nd semester (credited)",
-            "Curricular units 2nd semester (approved)",
-            "Curricular units 2nd semester (grade)"
-        ])
 
 # --------------------------------------------------
 # LANDING / INTRO SECTION
