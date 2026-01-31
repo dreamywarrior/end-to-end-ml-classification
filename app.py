@@ -461,7 +461,7 @@ for model_name in selected_models:
 # --------------------------------------------------
 # MODEL COMPARISON DASHBOARD
 # --------------------------------------------------
-st.header("📊 Model Comparison Dashboard")
+st.header("🏆 Model Comparison Dashboard")
 
 compare_df = pd.DataFrame(comparison_results)
 
