@@ -205,7 +205,7 @@ if show_dataset_info:
 # --------------------------------------------------
 # LANDING / INTRO SECTION
 # --------------------------------------------------
-if uploaded_file is None:
+if uploaded_file is None and not show_dataset_info:
     st.markdown("## 👋 Welcome")
 
     col1, col2 = st.columns([2, 3])
