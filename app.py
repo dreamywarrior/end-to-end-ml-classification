@@ -201,6 +201,7 @@ if show_dataset_info:
             xaxis_title="Academic Outcome"
         )
         st.plotly_chart(fig, use_container_width=True)
+    st.stop()
 
 # --------------------------------------------------
 # LANDING / INTRO SECTION
